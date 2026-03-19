@@ -1,4 +1,6 @@
+import 'package:clip_react/screens/clips.dart';
 import 'package:clip_react/screens/home.dart';
+import 'package:clip_react/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -51,7 +53,7 @@ class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
   final screens = [
     HomeScreen(),
-    Container(color: Colors.blue),
-    Container(color: Colors.yellow),
+    ClipsScreen(),
+    ProfileScreen()
   ];
 }
