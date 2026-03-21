@@ -51,9 +51,5 @@ class BottomMenu extends StatelessWidget {
 
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
-  final screens = [
-    HomeScreen(),
-    ClipsScreen(),
-    ProfileScreen()
-  ];
+  final screens = [HomeScreen(), ClipsScreen(), ProfileScreen()];
 }
