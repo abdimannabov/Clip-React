@@ -1,6 +1,6 @@
-import 'package:clip_react/screens/clips.dart';
-import 'package:clip_react/screens/home.dart';
-import 'package:clip_react/screens/profile.dart';
+import 'package:clip_react/screens/clips/clips.dart';
+import 'package:clip_react/screens/home/home.dart';
+import 'package:clip_react/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

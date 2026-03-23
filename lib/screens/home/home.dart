@@ -1,5 +1,5 @@
-import 'package:clip_react/screens/components/achievements_badges.dart';
-import 'package:clip_react/screens/components/progress_line.dart';
+import 'package:clip_react/screens/home/components/achievements_badges.dart';
+import 'package:clip_react/screens/home/components/progress_line.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {

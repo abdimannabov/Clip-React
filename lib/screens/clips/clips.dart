@@ -1,5 +1,5 @@
-import 'package:clip_react/screens/components/clip_video.dart';
-import 'package:clip_react/screens/components/like_comment.dart';
+import 'package:clip_react/screens/clips/components/clip_video.dart';
+import 'package:clip_react/screens/clips/components/like_comment.dart';
 import 'package:flutter/material.dart';
 
 class Clip {
