@@ -1,6 +1,7 @@
 import 'package:clip_react/screens/clips/clips.dart';
 import 'package:clip_react/screens/home/home.dart';
 import 'package:clip_react/screens/profile/profile.dart';
+import 'package:clip_react/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,31 +13,17 @@ class BottomMenu extends StatelessWidget {
     final controller = Get.put(NavigationController());
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        navigationBarTheme: NavigationBarThemeData(
-          indicatorColor: Colors.transparent,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          iconTheme: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return const IconThemeData(color: Colors.black, size: 28);
-            }
-            return const IconThemeData(color: Colors.grey, size: 28);
-          }),
-        ),
-      ),
+      theme: AppTheme.lightTheme,
       home: Scaffold(
         bottomNavigationBar: Obx(
           () => NavigationBar(
             height: 60,
             elevation: 0,
-            backgroundColor: Colors.white,
             indicatorColor: Colors.transparent,
             selectedIndex: controller.selectedIndex.value,
             onDestinationSelected: (index) =>
                 controller.selectedIndex.value = index,
-            destinations: [
+            destinations: const [
               NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
               NavigationDestination(icon: Icon(Icons.movie), label: 'Clips'),
               NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
@@ -51,5 +38,5 @@ class BottomMenu extends StatelessWidget {
 
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
-  final screens = [HomeScreen(), ClipsScreen(), ProfileScreen()];
+  final screens = const [HomeScreen(), ClipsScreen(), ProfileScreen()];
 }
