@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "788358162557",
+    "project_id": "sohib-abdimannabov-dream",
+    "storage_bucket": "sohib-abdimannabov-dream.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788358162557:android:461243a7136e48c08b6914",
+        "android_client_info": {
+          "package_name": "com.example.clip_react"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEPMt0oJhwQiEIvTJO5ybs3ZD1EHhyiYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
