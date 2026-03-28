@@ -69,10 +69,4 @@ const quickAccessItems = [
     subtitle: 'Review previous guesses and recent sessions',
     accent: AppColors.secondaryAccent,
   ),
-  QuickAccessItem(
-    icon: Icons.settings_rounded,
-    title: 'Settings',
-    subtitle: 'Manage account preferences and notifications',
-    accent: AppColors.primaryAccent,
-  ),
 ];

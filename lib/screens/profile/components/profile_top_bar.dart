@@ -43,7 +43,13 @@ class ProfileTopBar extends StatelessWidget {
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white12),
           ),
-          child: const Icon(Icons.tune_rounded, color: Colors.white),
+          child: IconButton(
+            icon: const Icon(Icons.tune_rounded, color: Colors.white),
+            onPressed: () {
+              // Opens drawer for preferences/settings
+              Scaffold.of(context).openEndDrawer();
+            },
+          ),
         ),
       ],
     );
