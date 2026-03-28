@@ -1,11 +1,16 @@
 import 'package:clip_react/data/profile_data.dart';
 import 'package:flutter/material.dart';
+import 'package:user_repository/user_repository.dart';
 
 class PerformanceSection extends StatelessWidget {
-  const PerformanceSection({super.key});
+  final MyUser user;
+
+  const PerformanceSection({required this.user, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final stats = buildProfileStats(user);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -20,17 +25,17 @@ class PerformanceSection extends StatelessWidget {
         const SizedBox(height: 14),
         Row(
           children: [
-            Expanded(child: _StatCard(stat: profileStats[0])),
+            Expanded(child: _StatCard(stat: stats[0])),
             const SizedBox(width: 12),
-            Expanded(child: _StatCard(stat: profileStats[1])),
+            Expanded(child: _StatCard(stat: stats[1])),
           ],
         ),
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: _StatCard(stat: profileStats[2])),
+            Expanded(child: _StatCard(stat: stats[2])),
             const SizedBox(width: 12),
-            Expanded(child: _StatCard(stat: profileStats[3])),
+            Expanded(child: _StatCard(stat: stats[3])),
           ],
         ),
       ],

@@ -1,8 +1,11 @@
 import 'package:clip_react/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProfileStreakCard extends StatelessWidget {
-  const ProfileStreakCard({super.key});
+  final MyUser user;
+
+  const ProfileStreakCard({required this.user, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class ProfileStreakCard extends StatelessWidget {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -33,7 +36,7 @@ class ProfileStreakCard extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            '5 days in a row with longest 3 correct answers.',
+            'You are ${user.streak} correct answers deep. Best run so far: ${user.bestStreak}.',
             style: TextStyle(color: Colors.white, height: 1.45),
           ),
           SizedBox(height: 18),
@@ -41,16 +44,16 @@ class ProfileStreakCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _HighlightMetric(
-                  value: '5',
-                  label: 'Days',
-                  icon: Icons.calendar_today_rounded,
+                  value: '${user.streak}',
+                  label: 'Current',
+                  icon: Icons.local_fire_department_rounded,
                 ),
               ),
               SizedBox(width: 12),
               Expanded(
                 child: _HighlightMetric(
-                  value: '3',
-                  label: 'Rounds',
+                  value: '${user.bestStreak}',
+                  label: 'Best',
                   icon: Icons.emoji_events_outlined,
                 ),
               ),

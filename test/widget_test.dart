@@ -6,12 +6,7 @@ void main() {
   testWidgets('profile screen renders redesigned sections', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(
-      const Directionality(
-        textDirection: TextDirection.ltr,
-        child: ProfileScreen(),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
 
     expect(find.text('Movie Enthusiast'), findsOneWidget);
     expect(find.text('Performance'), findsOneWidget);

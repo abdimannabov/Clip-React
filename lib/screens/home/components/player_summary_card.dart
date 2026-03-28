@@ -1,10 +1,12 @@
-import 'package:clip_react/data/home_data.dart';
 import 'package:clip_react/screens/home/components/progress_line.dart';
 import 'package:clip_react/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:user_repository/user_repository.dart';
 
 class PlayerSummaryCard extends StatelessWidget {
-  const PlayerSummaryCard({super.key});
+  final MyUser user;
+
+  const PlayerSummaryCard({required this.user, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +45,10 @@ class PlayerSummaryCard extends StatelessWidget {
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              _PlayerIdentity(),
+            children: [
+              _PlayerIdentity(user: user),
               SizedBox(height: 22),
-              _XPCard(),
+              _XPCard(user: user),
             ],
           ),
         ],
@@ -56,10 +58,15 @@ class PlayerSummaryCard extends StatelessWidget {
 }
 
 class _PlayerIdentity extends StatelessWidget {
-  const _PlayerIdentity();
+  final MyUser user;
+
+  const _PlayerIdentity({required this.user});
 
   @override
   Widget build(BuildContext context) {
+    final displayName = user.name.trim().isEmpty ? 'Player One' : user.name;
+    final levelLabel = 'Level ${user.level} Cinephile';
+
     return Row(
       children: [
         Container(
@@ -79,12 +86,12 @@ class _PlayerIdentity extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 16),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'John Doe',
+                displayName,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -93,29 +100,8 @@ class _PlayerIdentity extends StatelessWidget {
               ),
               SizedBox(height: 4),
               Text(
-                'Level 14 Cinephile',
+                levelLabel,
                 style: TextStyle(color: Colors.white70, fontSize: 15),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: AppColors.goldAccent.withValues(alpha: 0.16),
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.bolt_rounded, color: AppColors.goldAccent, size: 18),
-              SizedBox(width: 6),
-              Text(
-                '2nd Place',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
               ),
             ],
           ),
@@ -126,10 +112,14 @@ class _PlayerIdentity extends StatelessWidget {
 }
 
 class _XPCard extends StatelessWidget {
-  const _XPCard();
+  final MyUser user;
+
+  const _XPCard({required this.user});
 
   @override
   Widget build(BuildContext context) {
+    final accuracy = '${(user.accuracy * 100).round()}%';
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -142,8 +132,8 @@ class _XPCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
-                'XP Progress',
+              Text(
+                'Level ${user.level} Progress',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -152,33 +142,33 @@ class _XPCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '${HomeStats.currentXP.toInt()} / ${HomeStats.totalXP.toInt()} XP',
+                '${user.points} / ${user.nextLevelTarget} XP',
                 style: const TextStyle(color: Colors.white70),
               ),
             ],
           ),
-          SizedBox(height: 16),
-          const SizedBox(
+          const SizedBox(height: 16),
+          SizedBox(
             height: 42,
             child: ProgressLine(
-              progress: HomeStats.progress,
-              milestones: HomeStats.milestones,
+              progress: user.levelProgress,
+              milestones: const [0.25, 0.5, 0.75, 1.0],
             ),
           ),
           const SizedBox(height: 16),
-          const Row(
+          Row(
             children: [
               Expanded(
                 child: _MiniStat(
-                  value: '+1.2K',
-                  label: 'This Week',
-                  accent: AppColors.secondaryAccent,
+                  value: '${user.checkpoint}',
+                  label: 'Safe Zone',
+                  accent: AppColors.primaryAccent,
                 ),
               ),
               SizedBox(width: 12),
               Expanded(
                 child: _MiniStat(
-                  value: '87%',
+                  value: accuracy,
                   label: 'Accuracy',
                   accent: AppColors.emeraldAccent,
                 ),
@@ -186,8 +176,8 @@ class _XPCard extends StatelessWidget {
               SizedBox(width: 12),
               Expanded(
                 child: _MiniStat(
-                  value: '5',
-                  label: 'Day Streak',
+                  value: '${user.streak}',
+                  label: 'Hot Streak',
                   accent: AppColors.goldAccent,
                 ),
               ),

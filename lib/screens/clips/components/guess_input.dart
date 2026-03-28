@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
 
 class GuessInput extends StatelessWidget {
-  const GuessInput({super.key});
+  final TextEditingController controller;
+  final VoidCallback onSubmit;
+  final VoidCallback? onLockedTap;
+  final bool isEnabled;
+  final bool isSubmitting;
+  final String hintText;
+  final String submitLabel;
+
+  const GuessInput({
+    required this.controller,
+    required this.onSubmit,
+    this.onLockedTap,
+    required this.isEnabled,
+    required this.isSubmitting,
+    this.hintText = 'Type your guess ...',
+    this.submitLabel = 'Submit',
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +33,20 @@ class GuessInput extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          const TextField(
-            style: TextStyle(color: Colors.white),
+          TextField(
+            controller: controller,
+            readOnly: !isEnabled,
+            style: const TextStyle(color: Colors.white),
+            onSubmitted: (_) {
+              if (isEnabled) {
+                onSubmit();
+              } else {
+                onLockedTap?.call();
+              }
+            },
             decoration: InputDecoration(
-              hintText: 'Type your guess ...',
-              hintStyle: TextStyle(color: Colors.white54),
+              hintText: hintText,
+              hintStyle: const TextStyle(color: Colors.white54),
               border: InputBorder.none,
             ),
           ),
@@ -28,19 +54,26 @@ class GuessInput extends StatelessWidget {
             right: 3,
             top: 3,
             bottom: 3,
-            child: Container(
-              width: 60,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2D2C2C).withValues(alpha: 0.5),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
                 borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(
-                child: Text(
-                  'Submit',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                onTap: isEnabled ? onSubmit : onLockedTap,
+                child: Container(
+                  width: 68,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2D2C2C).withValues(alpha: 0.65),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      isSubmitting ? '...' : submitLabel,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ),

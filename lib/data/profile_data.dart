@@ -1,5 +1,6 @@
 import 'package:clip_react/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProfileStat {
   final String value;
@@ -29,32 +30,34 @@ class QuickAccessItem {
   });
 }
 
-const profileStats = [
-  ProfileStat(
-    value: '120',
-    label: 'Correct',
-    icon: Icons.check_circle_outline,
-    accent: AppColors.primaryAccent,
-  ),
-  ProfileStat(
-    value: '87%',
-    label: 'Accuracy',
-    icon: Icons.track_changes_rounded,
-    accent: AppColors.secondaryAccent,
-  ),
-  ProfileStat(
-    value: '14.5K',
-    label: 'XP Earned',
-    icon: Icons.bolt_rounded,
-    accent: AppColors.goldAccent,
-  ),
-  ProfileStat(
-    value: '24',
-    label: 'Rank Boost',
-    icon: Icons.trending_up_rounded,
-    accent: AppColors.emeraldAccent,
-  ),
-];
+List<ProfileStat> buildProfileStats(MyUser user) {
+  return [
+    ProfileStat(
+      value: '${user.correctGuesses}',
+      label: 'Correct',
+      icon: Icons.check_circle_outline,
+      accent: AppColors.primaryAccent,
+    ),
+    ProfileStat(
+      value: '${(user.accuracy * 100).round()}%',
+      label: 'Accuracy',
+      icon: Icons.track_changes_rounded,
+      accent: AppColors.secondaryAccent,
+    ),
+    ProfileStat(
+      value: '${user.points}',
+      label: 'XP Earned',
+      icon: Icons.bolt_rounded,
+      accent: AppColors.goldAccent,
+    ),
+    ProfileStat(
+      value: '${user.checkpoint}',
+      label: 'Safe Zone',
+      icon: Icons.security_rounded,
+      accent: AppColors.emeraldAccent,
+    ),
+  ];
+}
 
 const quickAccessItems = [
   QuickAccessItem(

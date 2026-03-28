@@ -1,8 +1,11 @@
 import 'package:clip_react/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProfileHeroCard extends StatelessWidget {
-  const ProfileHeroCard({super.key});
+  final MyUser user;
+
+  const ProfileHeroCard({required this.user, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +44,10 @@ class ProfileHeroCard extends StatelessWidget {
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              _ProfileIdentity(),
+            children: [
+              _ProfileIdentity(user: user),
               SizedBox(height: 24),
-              _ProfileXpCard(),
+              _ProfileXpCard(user: user),
             ],
           ),
         ],
@@ -54,10 +57,18 @@ class ProfileHeroCard extends StatelessWidget {
 }
 
 class _ProfileIdentity extends StatelessWidget {
-  const _ProfileIdentity();
+  final MyUser user;
+
+  const _ProfileIdentity({required this.user});
 
   @override
   Widget build(BuildContext context) {
+    final displayName = user.name.trim().isEmpty ? 'Player One' : user.name;
+    final handleBase = displayName.toLowerCase().replaceAll(
+      RegExp(r'[^a-z0-9]+'),
+      '',
+    );
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -78,12 +89,12 @@ class _ProfileIdentity extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 16),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'John Doe',
+                displayName,
                 style: TextStyle(
                   fontSize: 24,
                   color: Colors.white,
@@ -92,12 +103,12 @@ class _ProfileIdentity extends StatelessWidget {
               ),
               SizedBox(height: 4),
               Text(
-                '@cinemaoracle',
+                '@${handleBase.isEmpty ? 'playerone' : handleBase}',
                 style: TextStyle(color: Colors.white60, fontSize: 14),
               ),
               SizedBox(height: 10),
               Text(
-                'You are on a hot streak. Keep the momentum going and climb the leaderboard.',
+                'You have ${user.points} XP banked with a safe checkpoint at ${user.checkpoint}. Keep pushing for the next save point.',
                 style: TextStyle(color: Colors.white70, height: 1.4),
               ),
             ],
@@ -109,7 +120,9 @@ class _ProfileIdentity extends StatelessWidget {
 }
 
 class _ProfileXpCard extends StatelessWidget {
-  const _ProfileXpCard();
+  final MyUser user;
+
+  const _ProfileXpCard({required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +138,8 @@ class _ProfileXpCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
-                'Level 14',
+              Text(
+                'Level ${user.level}',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -135,7 +148,7 @@ class _ProfileXpCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '14,500 / 20,000 XP',
+                '${user.points} / ${user.nextLevelTarget} XP',
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.72),
                   fontWeight: FontWeight.w500,
@@ -147,7 +160,7 @@ class _ProfileXpCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(99),
             child: LinearProgressIndicator(
-              value: 0.725,
+              value: user.levelProgress,
               minHeight: 10,
               backgroundColor: Colors.white.withValues(alpha: 0.08),
               valueColor: const AlwaysStoppedAnimation<Color>(

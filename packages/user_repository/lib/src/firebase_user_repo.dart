@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:user_repository/src/entities/entities.dart';
 import 'package:user_repository/src/models/user.dart';
 import 'package:user_repository/src/user_repo.dart';
 
@@ -15,6 +16,23 @@ class FirebaseUserRepo implements UserRepository {
   Stream<User?> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
       return firebaseUser;
+    });
+  }
+
+  @override
+  Stream<MyUser> getMyUser(String userId) {
+    return usersCollection.doc(userId).snapshots().map((snapshot) {
+      final data = snapshot.data();
+      if (data == null) {
+        final currentUser = _firebaseAuth.currentUser;
+        return MyUser.empty.copyWith(
+          userID: userId,
+          email: currentUser?.email ?? '',
+          name: currentUser?.displayName ?? '',
+        );
+      }
+
+      return MyUser.fromEntity(MyUserEntity.fromDocument(data));
     });
   }
 
@@ -52,7 +70,19 @@ class FirebaseUserRepo implements UserRepository {
     try {
       return usersCollection
           .doc(myUser.userID)
-          .set(myUser.toEntity().toDocument());
+          .set(myUser.toEntity().toDocument(), SetOptions(merge: true));
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateUserData(MyUser myUser) {
+    try {
+      return usersCollection
+          .doc(myUser.userID)
+          .set(myUser.toEntity().toDocument(), SetOptions(merge: true));
     } catch (e) {
       log(e.toString());
       rethrow;

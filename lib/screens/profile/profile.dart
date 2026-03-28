@@ -4,6 +4,7 @@ import 'package:clip_react/screens/profile/components/profile_streak_card.dart';
 import 'package:clip_react/screens/profile/components/profile_top_bar.dart';
 import 'package:clip_react/screens/profile/components/quick_access_section.dart';
 import 'package:clip_react/theme.dart';
+import 'package:clip_react/widgets/current_user_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,69 +15,73 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppGradients.profileBackground,
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: AppSpacing.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                ProfileTopBar(),
-                AppSpacing.sectionGap,
-                ProfileHeroCard(),
-                AppSpacing.sectionGap,
-                ProfileStreakCard(),
-                AppSpacing.sectionGap,
-                PerformanceSection(),
-                AppSpacing.sectionGap,
-                QuickAccessSection(),
-              ],
+    return CurrentUserBuilder(
+      builder: (context, user) => Scaffold(
+        backgroundColor: AppColors.background,
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: AppGradients.profileBackground,
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: AppSpacing.screenPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const ProfileTopBar(),
+                  AppSpacing.sectionGap,
+                  ProfileHeroCard(user: user),
+                  AppSpacing.sectionGap,
+                  ProfileStreakCard(user: user),
+                  AppSpacing.sectionGap,
+                  PerformanceSection(user: user),
+                  AppSpacing.sectionGap,
+                  const QuickAccessSection(),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: AppColors.background),
-              child: Text(
-                'Settings',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+        endDrawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(color: AppColors.background),
+                child: Text(
+                  'Settings',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
+                ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Account'),
-            ),
-            ListTile(
-              leading: Icon(Icons.notifications),
-              title: Text('Notifications'),
-            ),
-            ListTile(leading: Icon(Icons.palette), title: Text('Appearance')),
-            ListTile(
-              leading: Icon(Icons.help_outline),
-              title: Text('Help & Support'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ListTile(
+                leading: Icon(Icons.account_circle),
+                title: Text('Account'),
               ),
-              onPressed: () {
-                // Handle log out action
-                context.read<SignInBloc>().add(const SignOutRequired());
-              },
-              child: Text('Log Out', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+              ListTile(
+                leading: Icon(Icons.notifications),
+                title: Text('Notifications'),
+              ),
+              ListTile(leading: Icon(Icons.palette), title: Text('Appearance')),
+              ListTile(
+                leading: Icon(Icons.help_outline),
+                title: Text('Help & Support'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+                onPressed: () {
+                  context.read<SignInBloc>().add(const SignOutRequired());
+                },
+                child: Text('Log Out', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
         ),
       ),
     );
