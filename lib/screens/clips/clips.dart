@@ -18,17 +18,41 @@ class ClipsScreen extends StatefulWidget {
 }
 
 class _ClipsScreenState extends State<ClipsScreen> {
+  static const double _clipZoomScale = 1.08;
   final PageController _controller = PageController();
   final TextEditingController _guessController = TextEditingController();
+  List<Clip> _clips = sampleClips;
   int currentIndex = 0;
   bool _isSubmitting = false;
+  bool _isLoadingClips = true;
   GuessEvaluation? _activeEvaluation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadClips();
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     _guessController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadClips() async {
+    final clips = await loadSampleClips();
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _clips = clips;
+      _isLoadingClips = false;
+      if (currentIndex >= _clips.length) {
+        currentIndex = 0;
+      }
+    });
   }
 
   void _showAlreadySubmittedMessage() {
@@ -44,7 +68,11 @@ class _ClipsScreenState extends State<ClipsScreen> {
       return;
     }
 
-    final clip = sampleClips[currentIndex];
+    if (_clips.isEmpty || currentIndex >= _clips.length) {
+      return;
+    }
+
+    final clip = _clips[currentIndex];
     if (!canSubmitClip(user, clip.id)) {
       _showAlreadySubmittedMessage();
       return;
@@ -112,7 +140,7 @@ class _ClipsScreenState extends State<ClipsScreen> {
       _isSubmitting = false;
     });
 
-    if (currentIndex < sampleClips.length - 1) {
+    if (currentIndex < _clips.length - 1) {
       await _controller.animateToPage(
         currentIndex + 1,
         duration: const Duration(milliseconds: 320),
@@ -124,56 +152,74 @@ class _ClipsScreenState extends State<ClipsScreen> {
   @override
   Widget build(BuildContext context) {
     return CurrentUserBuilder(
-      builder: (context, user) => Scaffold(
-        backgroundColor: Colors.black,
-        body: PageView.builder(
-          controller: _controller,
-          scrollDirection: Axis.vertical,
-          itemCount: sampleClips.length,
-          onPageChanged: (index) {
-            setState(() {
-              currentIndex = index;
-              _activeEvaluation = null;
-              _guessController.clear();
-            });
-          },
-          itemBuilder: (context, index) {
-            final clip = sampleClips[index];
-            final isCooldownBlocked = !canSubmitClip(user, clip.id);
-            final isCurrentClip = index == currentIndex;
+      builder: (context, user) =>
+          Scaffold(backgroundColor: Colors.black, body: _buildBody(user)),
+    );
+  }
 
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                ClipVideo(path: clip.videoPath, isActive: isCurrentClip),
-                const Positioned(right: 20, bottom: 160, child: LikeComment()),
-                Positioned(
-                  bottom: 80,
-                  right: 20,
-                  child: GuessInput(
-                    controller: _guessController,
-                    isEnabled:
-                        isCurrentClip && !_isSubmitting && !isCooldownBlocked,
-                    isSubmitting: isCurrentClip && _isSubmitting,
-                    hintText: isCooldownBlocked
-                        ? 'Already submitted your answer'
-                        : 'Type your guess ...',
-                    submitLabel: isCooldownBlocked ? 'Done' : 'Submit',
-                    onLockedTap: isCurrentClip
-                        ? _showAlreadySubmittedMessage
-                        : null,
-                    onSubmit: () => _submitGuess(user),
-                  ),
-                ),
-                if (_activeEvaluation != null && isCurrentClip)
-                  Center(
-                    child: ClipResultOverlay(evaluation: _activeEvaluation!),
-                  ),
-              ],
-            );
-          },
+  Widget _buildBody(MyUser user) {
+    if (_isLoadingClips) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_clips.isEmpty) {
+      return const Center(
+        child: Text(
+          'No clips were found.',
+          style: TextStyle(color: Colors.white),
         ),
-      ),
+      );
+    }
+
+    return PageView.builder(
+      controller: _controller,
+      scrollDirection: Axis.vertical,
+      itemCount: _clips.length,
+      onPageChanged: (index) {
+        setState(() {
+          currentIndex = index;
+          _activeEvaluation = null;
+          _guessController.clear();
+        });
+      },
+      itemBuilder: (context, index) {
+        final clip = _clips[index];
+        final isCooldownBlocked = !canSubmitClip(user, clip.id);
+        final isCurrentClip = index == currentIndex;
+
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            ClipVideo(
+              key: ValueKey(clip.id),
+              path: clip.videoPath,
+              isActive: isCurrentClip,
+              zoomScale: _clipZoomScale,
+            ),
+            const Positioned(right: 20, bottom: 160, child: LikeComment()),
+            Positioned(
+              bottom: 80,
+              right: 20,
+              child: GuessInput(
+                controller: _guessController,
+                isEnabled:
+                    isCurrentClip && !_isSubmitting && !isCooldownBlocked,
+                isSubmitting: isCurrentClip && _isSubmitting,
+                hintText: isCooldownBlocked
+                    ? 'Already submitted your answer'
+                    : 'Type your guess ...',
+                submitLabel: isCooldownBlocked ? 'Done' : 'Submit',
+                onLockedTap: isCurrentClip
+                    ? _showAlreadySubmittedMessage
+                    : null,
+                onSubmit: () => _submitGuess(user),
+              ),
+            ),
+            if (_activeEvaluation != null && isCurrentClip)
+              Center(child: ClipResultOverlay(evaluation: _activeEvaluation!)),
+          ],
+        );
+      },
     );
   }
 }
