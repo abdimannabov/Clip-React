@@ -1,16 +1,18 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class ClipVideo extends StatefulWidget {
   final String path;
   final bool isActive;
-  final double zoomScale;
+  final double horizontalCrop;
 
   const ClipVideo({
     super.key,
     required this.path,
     required this.isActive,
-    this.zoomScale = 1,
+    this.horizontalCrop = 0,
   });
 
   @override
@@ -99,20 +101,36 @@ class _ClipVideoState extends State<ClipVideo> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return SizedBox.expand(
-      child: ClipRect(
-        child: Transform.scale(
-          scale: widget.zoomScale,
-          child: FittedBox(
-            fit: BoxFit.cover,
-            child: SizedBox(
-              width: controller.value.size.width,
-              height: controller.value.size.height,
-              child: VideoPlayer(controller),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final videoSize = controller.value.size;
+        final containScale = math.min(
+          constraints.maxWidth / videoSize.width,
+          constraints.maxHeight / videoSize.height,
+        );
+        final containedWidth = videoSize.width * containScale;
+        final containedHeight = videoSize.height * containScale;
+        final maxSafeScale = constraints.maxHeight / containedHeight;
+        final requestedScale =
+            (containedWidth + (widget.horizontalCrop * 2)) / containedWidth;
+        final safeScale = requestedScale.clamp(1.0, maxSafeScale);
+
+        return SizedBox.expand(
+          child: ClipRect(
+            child: Transform.scale(
+              scale: safeScale,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: SizedBox(
+                  width: videoSize.width,
+                  height: videoSize.height,
+                  child: VideoPlayer(controller),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

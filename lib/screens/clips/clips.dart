@@ -18,7 +18,7 @@ class ClipsScreen extends StatefulWidget {
 }
 
 class _ClipsScreenState extends State<ClipsScreen> {
-  static const double _clipZoomScale = 1.08;
+  static const double _clipHorizontalCrop = 100;
   final PageController _controller = PageController();
   final TextEditingController _guessController = TextEditingController();
   List<Clip> _clips = sampleClips;
@@ -194,7 +194,7 @@ class _ClipsScreenState extends State<ClipsScreen> {
               key: ValueKey(clip.id),
               path: clip.videoPath,
               isActive: isCurrentClip,
-              zoomScale: _clipZoomScale,
+              horizontalCrop: _clipHorizontalCrop,
             ),
             const Positioned(right: 20, bottom: 160, child: LikeComment()),
             Positioned(

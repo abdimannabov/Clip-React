@@ -14,6 +14,14 @@ void main() {
     points: 50,
   );
 
+  test('sample clips use configured movie titles', () {
+    expect(sampleClips[0].solution, 'One Piece');
+    expect(
+      sampleClips[2].solution,
+      'Doctor Strange In The Multiverse of Madness',
+    );
+  });
+
   test('checkAnswer matches normalized keywords inside longer text', () {
     expect(
       checkAnswer('That dream movie with Leonardo in it', clip.answers),
@@ -60,6 +68,26 @@ void main() {
     expect(evaluation.matchType, GuessMatchType.partial);
     expect(evaluation.pointsDelta, 25);
     expect(evaluation.updatedUser.correctGuesses, 1);
+  });
+
+  test('shortened correct movie title counts as partial match', () {
+    const doctorStrangeClip = Clip(
+      id: 'clip_3',
+      videoPath: 'assets/videos/Clip3.mp4',
+      prompt: 'Guess the movie',
+      solution: 'Doctor Strange In The Multiverse of Madness',
+      answers: ['doctor strange', 'multiverse of madness', 'strange'],
+      points: 50,
+    );
+
+    final evaluation = evaluateGuess(
+      user: MyUser.empty.copyWith(userID: 'u1'),
+      clip: doctorStrangeClip,
+      input: 'Doctor Strange',
+    );
+
+    expect(evaluation.matchType, GuessMatchType.partial);
+    expect(evaluation.pointsDelta, 25);
   });
 
   test('wrong answers cannot drop below checkpoint', () {
